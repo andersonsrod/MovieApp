@@ -14,6 +14,9 @@ final class MovieViewModelTests: XCTestCase {
     func testLoad() throws {
         let promise = expectation(description: "Load")
         
+        XCTAssertTrue(viewModel.hasNoData)
+        XCTAssertFalse(viewModel.showHasNoDataText)
+        
         Task {
             await viewModel.load()
             promise.fulfill()
@@ -21,6 +24,8 @@ final class MovieViewModelTests: XCTestCase {
         
         waitForExpectations(timeout: 10, handler: nil)
         
-        XCTAssertFalse(viewModel.shows.isEmpty)
+        XCTAssertFalse(viewModel.shows!.isEmpty)
+        XCTAssertFalse(viewModel.hasNoData)
+        XCTAssertFalse(viewModel.showHasNoDataText)
     }
 }

@@ -14,24 +14,24 @@ struct MovieView: View {
     
     private var listView: some View {
         LazyVStack(spacing: 0) {
-            ForEach(viewModel.shows, id:\.id) { show in
+            ForEach(viewModel.shows ?? [], id:\.id) { show in
                 NavigationLink(value: show) {
                     MovieItemView(viewModel: .init(show: show))
                         .onAppear {
-                            if show.id == viewModel.shows.first?.id {
+                            if show.id == viewModel.shows?.first?.id {
                                 withAnimation {
                                     viewModel.showBackoTopButton = false
                                 }
                             }
                                 
-                            if show.id == viewModel.shows.last?.id {
+                            if show.id == viewModel.shows?.last?.id {
                                 Task {
                                     await viewModel.load(loadMore: true)
                                 }
                             }
                         }
                         .onDisappear {
-                            if show.id == viewModel.shows.first?.id {
+                            if show.id == viewModel.shows?.first?.id {
                                 withAnimation {
                                     viewModel.showBackoTopButton = true
                                 }
@@ -50,7 +50,7 @@ struct MovieView: View {
                 Spacer()
                 Button {
                     withAnimation {
-                        proxy.scrollTo(viewModel.shows.first?.id)
+                        proxy.scrollTo(viewModel.shows?.first?.id)
                     }
                 } label: {
                     SwiftUI.Image(systemName: "chevron.up")
@@ -70,7 +70,7 @@ struct MovieView: View {
                 ZStack {
                     ScrollView {
                         VStack {
-                            if viewModel.hasNoData {
+                            if viewModel.showHasNoDataText {
                                 VStack {
                                     Spacer()
                                         .frame(height: height / 2)
@@ -110,7 +110,7 @@ struct MovieView: View {
                 }
                 .navigationBarTitle("Movies")
                 .onAppear {
-                    if viewModel.shows.isEmpty {
+                    if viewModel.hasNoData {
                         Task {
                             await viewModel.load()
                         }

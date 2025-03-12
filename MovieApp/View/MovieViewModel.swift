@@ -9,14 +9,18 @@ import SwiftUI
 
 final class MovieViewModel: ObservableObject {
     @Published var isLoading = false
-    @Published var shows: [Show] = []
+    @Published var shows: [Show]?
     @Published var showBackoTopButton = false
     
     var currentPage: Int = 1
     var reachedLastPage = false
     
     var hasNoData: Bool {
-        shows.isEmpty
+        shows?.isEmpty ?? true
+    }
+    
+    var showHasNoDataText: Bool {
+        shows != nil && hasNoData
     }
     
     private let service: ShowsService
@@ -48,7 +52,7 @@ final class MovieViewModel: ObservableObject {
             let shows = try await self.service.fecthShows(page: currentPage)
             
             if loadMore {
-                self.shows.append(contentsOf: shows)
+                self.shows?.append(contentsOf: shows)
             } else {
                 self.shows = shows
             }
